@@ -19,8 +19,8 @@ pipeline {
             steps {
                 echo "🐳 Building Docker image..."
                 sh """
-                    docker build \
-                        -t ${REGISTRY}/${APP_NAME}:${IMAGE_TAG} \
+                    docker build --network host \\
+                        -t ${REGISTRY}/${APP_NAME}:${IMAGE_TAG} \\
                         -t ${REGISTRY}/${APP_NAME}:latest .
                 """
             }
@@ -30,7 +30,7 @@ pipeline {
             steps {
                 echo "🧪 Running tests inside Docker container..."
                 sh """
-                    docker run --rm ${REGISTRY}/${APP_NAME}:${IMAGE_TAG} \
+                    docker run --rm --network host ${REGISTRY}/${APP_NAME}:${IMAGE_TAG} \\
                         sh -c "pytest tests/ -v --junitxml=test-results.xml || true" || true
                 """
                 // In a real scenario, we would mount a volume to extract test-results.xml
@@ -61,11 +61,11 @@ pipeline {
     post {
         always {
             sh """
-                curl -sf -X POST http://dashboard-backend:5050/api/builds/webhook \
-                    -H 'Content-Type: application/json' \
+                curl -sf -X POST http://dashboard-backend:5050/api/builds/webhook \\
+                    -H 'Content-Type: application/json' \\
                     -d '{"job":"${JOB_NAME}","build_number":${BUILD_NUMBER},"result":"${currentBuild.result}","duration_ms":${currentBuild.duration}}' || true
             """
-            cleanWs()
+            sh 'rm -rf * || true'
         }
     }
 }
