@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        REGISTRY = "${env.REGISTRY_HOST ?: 'registry:5000'}"
+        REGISTRY = "localhost:5000"
         APP_NAME = "python-app"
         IMAGE_TAG = "${env.BUILD_NUMBER}"
     }
