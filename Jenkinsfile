@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         APP_NAME = 'celebration-app'
-        REGISTRY = "${env.REGISTRY_HOST}" // From Jenkins Global Env
+        REGISTRY = "${env.REGISTRY_HOST ?: 'localhost:5000'}"
         IMAGE_TAG = "latest"
     }
 
@@ -39,7 +39,8 @@ pipeline {
         stage('Push to Registry') {
             steps {
                 echo 'Pushing Image to Local Registry...'
-                sh "docker push ${REGISTRY}/${APP_NAME}:${IMAGE_TAG}"
+                // Use localhost:5000 for the host docker daemon
+                sh "docker push localhost:5000/${APP_NAME}:${IMAGE_TAG}"
             }
         }
 
@@ -48,7 +49,8 @@ pipeline {
                 echo 'Deploying to Staging...'
                 sh "docker stop ${APP_NAME} || true"
                 sh "docker rm ${APP_NAME} || true"
-                sh "docker run -d --name ${APP_NAME} -p 9999:8080 ${REGISTRY}/${APP_NAME}:${IMAGE_TAG}"
+                // Use the registry container name for internal run if needed, but localhost is safer for host daemon
+                sh "docker run -d --name ${APP_NAME} -p 9999:8080 localhost:5000/${APP_NAME}:${IMAGE_TAG}"
                 echo '---'
                 echo "SUCCESS: Celebration Page is live at http://localhost:9999"
             }
