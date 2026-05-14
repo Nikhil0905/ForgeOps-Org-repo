@@ -56,8 +56,21 @@ pipeline {
     }
 
     post {
+        always {
+            echo 'Sending Build Status to ForgeOps Dashboard...'
+            sh """
+                curl -X POST -H "Content-Type: application/json" \
+                -d '{"job": "${env.JOB_NAME}", "build_number": ${env.BUILD_NUMBER}, "result": "${currentBuild.result ?: 'SUCCESS'}", "duration_ms": ${currentBuild.duration}, "triggered_at": "${new Date().toString()}"}' \
+                http://dashboard-backend:5050/api/builds/webhook
+            """
+        }
         success {
             echo '🎉 Platform Verification Complete!'
+            sh """
+                curl -X POST -H "Content-Type: application/json" \
+                -d '{"service": "${env.APP_NAME}", "image": "${env.REGISTRY}/${env.APP_NAME}:${env.IMAGE_TAG}", "status": "SUCCESS", "reason": "Automated Deployment"}' \
+                http://dashboard-backend:5050/api/deployments
+            """
         }
     }
 }
