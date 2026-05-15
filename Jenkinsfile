@@ -17,7 +17,7 @@ pipeline {
         stage('Build & Test') {
             steps {
                 echo 'Compiling Java Application with Maven...'
-                sh 'mvn clean package -DskipTests'
+                sh 'mvn -o clean package -DskipTests'
             }
         }
 
