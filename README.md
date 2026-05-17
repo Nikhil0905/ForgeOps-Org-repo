@@ -41,6 +41,13 @@ main                            ← Protected mainline (stable, reviewed code on
 4. When offline, changes are **queued locally** and synced automatically when connectivity is restored
 5. Merges to `main` happen only through **reviewed Pull Requests**
 
+## How It Works
+Completed a demo as proof using the built Platform.
+Deployed Application — End-to-End Success
+> A fully built, tested, and deployed application running live — the complete CI/CD cycle working autonomously.
+
+![Deployed Application](Screenshot_Visuals/webpage_Test_success.png)
+
 ## Managed By
 
 **[ForgeOps — Offline-First DevOps Platform](https://github.com/Nikhil0905/ForgeOps-Offline-First-DevOps-Platform)**  
