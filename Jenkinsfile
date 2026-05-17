@@ -17,7 +17,13 @@ pipeline {
         stage('Build & Test') {
             steps {
                 echo 'Compiling Java Application with Maven...'
-                sh 'mvn -o clean package -DskipTests'
+                sh """
+                    mvn clean package \
+                        -DskipTests=true \
+                        -s /var/jenkins_home/.m2/settings.xml \
+                        --batch-mode \
+                        -Dmaven.repo.local=/var/jenkins_home/.m2/repository
+                """
             }
         }
 
